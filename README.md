@@ -1,4 +1,4 @@
-# CookieStore — Trabalho de Conclusão de Curso
+# CookieStore — Trabalho de Conclusão do modulo .NET
 
 Sistema de controle de vendas e produção de cookies, desenvolvido com **C# .NET 8** e modelado seguindo os princípios de **Domain-Driven Design (DDD)**.
 
