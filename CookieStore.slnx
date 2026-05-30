@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CookieStore.API/CookieStore.API.csproj" />
+    <Project Path="src/CookieStore.Application/CookieStore.Application.csproj" />
+    <Project Path="src/CookieStore.Domain/CookieStore.Domain.csproj" />
+    <Project Path="src/CookieStore.Infrastructure/CookieStore.Infrastructure.csproj" />
+    <Project Path="src/CookieStore.Tests/CookieStore.Tests.csproj" />
+  </Folder>
+</Solution>
