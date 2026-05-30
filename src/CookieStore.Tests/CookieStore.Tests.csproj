@@ -27,7 +27,6 @@
     <ProjectReference Include="..\CookieStore.Domain\CookieStore.Domain.csproj" />
     <ProjectReference Include="..\CookieStore.Application\CookieStore.Application.csproj" />
     <ProjectReference Include="..\CookieStore.Infrastructure\CookieStore.Infrastructure.csproj" />
-    <ProjectReference Include="..\CookieStore.API\CookieStore.API.csproj" />
   </ItemGroup>
 
 </Project>

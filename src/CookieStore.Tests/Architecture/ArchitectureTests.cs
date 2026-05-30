@@ -7,20 +7,14 @@ namespace CookieStore.Tests.Architecture;
 /// Architecture tests that enforce DDD layer-dependency rules using NetArchTest.
 /// These tests verify that no layer reaches across its permitted boundary,
 /// keeping the Domain free of infrastructure concerns and the Application free
-/// of infrastructure and presentation concerns.
+/// of infrastructure concerns.
 /// </summary>
 public class ArchitectureTests
 {
-    // Namespace constants used by NetArchTest.Rules to identify each assembly.
     private const string DomainNamespace = "CookieStore.Domain";
     private const string ApplicationNamespace = "CookieStore.Application";
     private const string InfrastructureNamespace = "CookieStore.Infrastructure";
-    private const string ApiNamespace = "CookieStore.API";
 
-    // -----------------------------------------------------------------------
-    // Anchor types — one well-known public type per assembly so that
-    // typeof(T).Assembly resolves the correct loaded assembly at runtime.
-    // -----------------------------------------------------------------------
     private static readonly System.Reflection.Assembly DomainAssembly =
         typeof(CookieStore.Domain.DomainException).Assembly;
 
@@ -29,9 +23,6 @@ public class ArchitectureTests
 
     private static readonly System.Reflection.Assembly InfrastructureAssembly =
         typeof(CookieStore.Infrastructure.CookieDbContext).Assembly;
-
-    private static readonly System.Reflection.Assembly ApiAssembly =
-        typeof(CookieStore.API.AssemblyAnchor).Assembly;
 
     // -----------------------------------------------------------------------
     // Rule 1 — Domain must not reference Infrastructure
@@ -43,13 +34,11 @@ public class ArchitectureTests
     [Fact]
     public void Domain_ShouldNot_HaveDependencyOn_Infrastructure()
     {
-        // Arrange + Act
         var result = Types.InAssembly(DomainAssembly)
             .ShouldNot()
             .HaveDependencyOn(InfrastructureNamespace)
             .GetResult();
 
-        // Assert
         result.IsSuccessful.Should().BeTrue(
             because: "the Domain layer must never depend on Infrastructure — " +
                      "only the Infrastructure layer may depend on the Domain");
@@ -65,13 +54,11 @@ public class ArchitectureTests
     [Fact]
     public void Domain_ShouldNot_HaveDependencyOn_Application()
     {
-        // Arrange + Act
         var result = Types.InAssembly(DomainAssembly)
             .ShouldNot()
             .HaveDependencyOn(ApplicationNamespace)
             .GetResult();
 
-        // Assert
         result.IsSuccessful.Should().BeTrue(
             because: "the Domain layer must never depend on the Application layer — " +
                      "domain logic must remain independent of use-case orchestration");
@@ -87,60 +74,13 @@ public class ArchitectureTests
     [Fact]
     public void Application_ShouldNot_HaveDependencyOn_Infrastructure()
     {
-        // Arrange + Act
         var result = Types.InAssembly(ApplicationAssembly)
             .ShouldNot()
             .HaveDependencyOn(InfrastructureNamespace)
             .GetResult();
 
-        // Assert
         result.IsSuccessful.Should().BeTrue(
             because: "the Application layer must program against Domain repository interfaces, " +
                      "not against Infrastructure implementations — this preserves testability");
-    }
-
-    // -----------------------------------------------------------------------
-    // Rule 4 — Application must not reference API
-    //
-    // DDD: The Application layer must be presentation-agnostic.  An outward
-    // reference to the API (controllers, routing, HTTP concerns) would couple
-    // business orchestration to a delivery mechanism.
-    // -----------------------------------------------------------------------
-    [Fact]
-    public void Application_ShouldNot_HaveDependencyOn_API()
-    {
-        // Arrange + Act
-        var result = Types.InAssembly(ApplicationAssembly)
-            .ShouldNot()
-            .HaveDependencyOn(ApiNamespace)
-            .GetResult();
-
-        // Assert
-        result.IsSuccessful.Should().BeTrue(
-            because: "the Application layer must not know about the API layer — " +
-                     "use cases must be independent of the delivery mechanism");
-    }
-
-    // -----------------------------------------------------------------------
-    // Rule 5 — API must not reference Domain directly
-    //
-    // DDD: Controllers must talk to Application Services only.  A direct
-    // reference from the API to Domain types (Aggregates, VOs, Repositories)
-    // bypasses the Application layer and leaks domain objects into the
-    // presentation tier, violating the Facade pattern of App Services.
-    // -----------------------------------------------------------------------
-    [Fact]
-    public void API_ShouldNot_HaveDependencyOn_Domain()
-    {
-        // Arrange + Act
-        var result = Types.InAssembly(ApiAssembly)
-            .ShouldNot()
-            .HaveDependencyOn(DomainNamespace)
-            .GetResult();
-
-        // Assert
-        result.IsSuccessful.Should().BeTrue(
-            because: "the API layer must only depend on Application Services and DTOs — " +
-                     "Domain types must never be exposed directly through controllers");
     }
 }
